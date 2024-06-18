@@ -10,11 +10,12 @@
     let statTypes: {name: string, id: number}[] = names.map((name, i) => ({name, id: ids[i]}));
 </script>
 
-<div role="group">
-    <select bind:value={stat.type}>
+<div class="join">
+    <select class="select select-bordered select-primary join-item" bind:value={stat.type}>
         {#each statTypes as statType}
             <option value={statType.id}>{statType.name}</option>
         {/each}
     </select>
-    <input type="number" bind:value={stat.value}/>  
+    <input class="input input-bordered input-primary join-item" type="number" bind:value={stat.value}/>  
 </div>
+

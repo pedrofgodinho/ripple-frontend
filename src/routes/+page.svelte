@@ -1,19 +1,21 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-    import { BACKEND_URI } from "$lib/config";
+
+    import { onMount } from "svelte";
+    import { getCharacters, getCharacter } from "$lib/backend/backend";
+
+    let characters: string = "Waiting for data...";
+    onMount(async () => {
+        const characters = await getCharacters();
+        const first = await getCharacter(characters[0].id);
+        console.log(first);
+    });
+    
+    
+    /*
     import { CharacterStats, MoveElement, MoveType, StatType, exampleStats, type BaseStats, type Echo, type Move, type Stat } from "ripple-calculator";
 	import EchoCreator from "$lib/EchoCreator.svelte";
 	import { echoes, extraStats, weapon } from "$lib/store";
 	import StatSelector from "$lib/StatSelector.svelte";
-
-    /*
-    let characters: string = "Waiting for data...";
-    onMount(async () => {
-        const res = await fetch(`${BACKEND_URI}characters`);
-        const data = await res.json();
-        characters = data['characters'].join(", ");
-    });
-    */
 
     // Jiyan stats at level 70. Should be taken from the backend in the future.
     let baseStats: BaseStats = {hp: 7954, atk: 343, def: 899};
@@ -48,8 +50,10 @@
     function roundPercent(num: number): string {
         return round(num * 100) + "%";
     }
+    */
 </script>
 
+<!-- 
 <main class="container-fluid">
     <h1>Ripple Calculator</h1>
     <hr/>
@@ -161,3 +165,4 @@
     <p>{JSON.stringify(stats)}</p>
     
 </main>
+-->
