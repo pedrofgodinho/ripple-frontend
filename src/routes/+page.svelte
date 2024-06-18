@@ -70,7 +70,7 @@
     
     <details>
         <summary role="button" class="outline">Weapon</summary>
-        <EchoCreator bind:echo={$weapon} substatLabel="Passive"/>
+        <EchoCreator bind:echo={$weapon}/>
     </details>
 
     <details>
