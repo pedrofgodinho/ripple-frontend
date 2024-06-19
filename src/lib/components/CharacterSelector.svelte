@@ -12,7 +12,7 @@
         <h2>Element: {character.element}</h2>
         <h2>Weapon Type: {character.weapon}</h2>
         <div class="card-actions justify-center">
-            <a class="btn btn-primary w-full" href="/characters/{character.id}">Home</a>
+            <a class="btn btn-primary w-full" href="/characters/{character.id}">Select</a>
         </div>
     </div>    
 </div>
