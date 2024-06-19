@@ -26,7 +26,7 @@ lastEchoId.subscribe(value => {
 export function addEcho() {
     lastEchoId.update(n => n + 1);
     const id = get(lastEchoId);
-    echoes.update(echoes => ({...echoes, [id]: DEFAULT_ECHO}));
+    echoes.update(echoes => ({...echoes, [id]: structuredClone(DEFAULT_ECHO)}));
 }
 
 export function removeEcho(id: number) {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import EchoEditor from "$lib/components/EchoEditor.svelte";
-    import {DEFAULT_ECHO, addEcho, removeEcho, echoes} from "$lib/store";
+    import {addEcho, removeEcho, echoes} from "$lib/store";
 </script>
 
 <main class="flex flex-wrap">
