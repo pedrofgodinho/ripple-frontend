@@ -1,7 +1,7 @@
 import { browser } from "$app/environment";
 import { Character, StatType, type Echo } from "ripple-calculator";
 import { get, writable, type Writable } from "svelte/store";
-import type { BackendCharacter as CharacterData, CharacterMetadata } from "./backend/character";
+import type { BackendCharacter as CharacterData } from "./backend/character";
 
 
 // Echo Storage
@@ -11,8 +11,8 @@ export const DEFAULT_ECHO: Echo = {
     secondaryStat: {type: StatType.HpFlat, value: 0},
     substats: []
 }
-export const echoes: Writable<{[key: number]: Echo}> = writable(getFromLocalStorage("echoes", {}));
-echoes.subscribe(value => {
+export const echoStorage: Writable<{[key: number]: Echo}> = writable(getFromLocalStorage("echoes", {}));
+echoStorage.subscribe(value => {
     if (browser) {
         localStorage.setItem("echoes", JSON.stringify(value));
     }
@@ -27,11 +27,11 @@ lastEchoId.subscribe(value => {
 export function addEcho() {
     lastEchoId.update(n => n + 1);
     const id = get(lastEchoId);
-    echoes.update(echoes => ({...echoes, [id]: structuredClone(DEFAULT_ECHO)}));
+    echoStorage.update(echoes => ({...echoes, [id]: structuredClone(DEFAULT_ECHO)}));
 }
 
 export function removeEcho(id: number) {
-    echoes.update(echoes => {
+    echoStorage.update(echoes => {
         const newEchoes = {...echoes};
         delete newEchoes[id];
         return newEchoes;
@@ -41,22 +41,29 @@ export function removeEcho(id: number) {
 // Character Storage
 export interface StoredCharacter {
     data: CharacterData;
-    stats: Character;
+    character: Character;
     echoes: [number|undefined, number|undefined, number|undefined, number|undefined, number|undefined];
 }
-export const characters: Writable<{[key: string]: StoredCharacter}> = writable(getFromLocalStorage("characters", {}));
-characters.subscribe(value => {
+export const characterStorage: Writable<{[key: string]: StoredCharacter}> = writable(getFromLocalStorage("characters", {}, (json) => {
+    const characters = JSON.parse(json);
+    for (const id in characters) {
+        characters[id].character = Character.fromInterface(characters[id].character);
+    }
+    return characters;
+}));
+characterStorage.subscribe(value => {
     if (browser) {
         localStorage.setItem("characters", JSON.stringify(value));
     }
 });
 
 export function addCharacter(data: CharacterData) {
-    characters.update(characters => ({...characters, [data.id]: {data, stats: new Character(data.baseStats.a0l01), echoes: [undefined, undefined, undefined, undefined, undefined]}}));
+    console.log("Adding character", new Character(data.baseStats.a0l01));
+    characterStorage.update(characters => ({...characters, [data.id]: {data, character: new Character(data.baseStats.a0l01), echoes: [undefined, undefined, undefined, undefined, undefined]}}));
 }
 
 export function removeCharacter(id: string) {
-    characters.update(characters => {
+    characterStorage.update(characters => {
         const newCharacters = {...characters};
         delete newCharacters[id];
         return newCharacters;
@@ -65,13 +72,13 @@ export function removeCharacter(id: string) {
 
 
 
-function getFromLocalStorage<T>(key: string, defaultValue: T): T {
+function getFromLocalStorage<T>(key: string, defaultValue: T, parser: (json: string) => T = json => JSON.parse(json)): T {
     if (!browser) {
         return defaultValue;
     }
     const stored = localStorage.getItem(key);
     try {
-        return stored ? JSON.parse(stored) : defaultValue;
+        return stored ? parser(stored) : defaultValue;
     } catch (e) {
         console.error(`Error parsing ${key} from localStorage:`, e);
         return defaultValue;

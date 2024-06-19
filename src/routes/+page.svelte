@@ -1,16 +1,4 @@
 <script lang="ts">
-
-    import { onMount } from "svelte";
-    import { getCharacters, getCharacter } from "$lib/backend/backend";
-
-    let characters: string = "Waiting for data...";
-    onMount(async () => {
-        const characters = await getCharacters();
-        const first = await getCharacter(characters[0].id);
-        console.log(first);
-    });
-    
-    
     /*
     import { CharacterStats, MoveElement, MoveType, StatType, exampleStats, type BaseStats, type Echo, type Move, type Stat } from "ripple-calculator";
 	import EchoCreator from "$lib/EchoCreator.svelte";

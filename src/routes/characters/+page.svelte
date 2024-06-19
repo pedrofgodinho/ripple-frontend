@@ -3,15 +3,15 @@
     import { getCharacters, getCharacter } from "$lib/backend/backend";
 	import type { CharacterMetadata } from "$lib/backend/character";
 	import CharacterSelector from "$lib/components/CharacterSelector.svelte";
-	import { addCharacter, characters } from "$lib/store";
+	import { addCharacter, characterStorage } from "$lib/store";
 
     let waiting: boolean = true;
     let metadatas: CharacterMetadata[] = [];
     $: missingCharacters = metadatas.filter(metadata => {
-        return $characters[metadata.id] === undefined;
+        return $characterStorage[metadata.id] === undefined;
     });
     $: ownedCharacters = metadatas.filter(metadata => {
-        return $characters[metadata.id] !== undefined;
+        return $characterStorage[metadata.id] !== undefined;
     });
 
     onMount(async () => {

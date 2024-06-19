@@ -1,24 +1,29 @@
 <script lang="ts">
-	import { getCharacter } from "$lib/backend/backend";
-	import type { BackendCharacter } from "$lib/backend/character";
-	import type { Character } from "ripple-calculator";
 	import type { PageData } from "../$types";
-    import { onMount } from "svelte";
+	import { type StoredCharacter, characterStorage } from "$lib/store";
+	import { get } from "svelte/store";
+	import CharacterSelector from "$lib/components/CharacterSelector.svelte";
+	import CharacterStatDisplay from "$lib/components/CharacterStatDisplay.svelte";
 
     export let data: PageData;
-
-    let backendCharacter: BackendCharacter;
-    let waiting: boolean = true;
-    onMount(async () => {
-        backendCharacter = await getCharacter(data.id); // Don't know how to get TS to recognize data.id
-        waiting = false;
-    });
-
+    let character: StoredCharacter = $characterStorage[data.id];
 </script>
 
-<main class="container-fluid">
-    {#if !waiting}
-        <p>{JSON.stringify(backendCharacter)}</p>
-    {/if}
+<main class="flex flex-wrap">
+    {#if character}
+        <p>{JSON.stringify(character)}</p>
 
+        <!--Character Sheet-->
+        <div class="card shadow-xl w-max bg-neutral m-4">
+            <div class="card-body">
+                <h2 class="card-title">{character.data.name}</h2>
+                <h2>Element: {character.data.element}</h2>
+                <h2>Weapon Type: {character.data.weapon}</h2>
+            </div>
+        </div>
+
+        <!--Character Stats-->
+        <CharacterStatDisplay bind:character={character}/>
+
+    {/if}
 </main>
