@@ -8,10 +8,10 @@
     let waiting: boolean = true;
     let metadatas: CharacterMetadata[] = [];
     $: missingCharacters = metadatas.filter(metadata => {
-        return !$characters.find(character => character.data.id === metadata.id);
+        return $characters[metadata.id] === undefined;
     });
     $: ownedCharacters = metadatas.filter(metadata => {
-        return $characters.find(character => character.data.id === metadata.id);
+        return $characters[metadata.id] !== undefined;
     });
 
     onMount(async () => {

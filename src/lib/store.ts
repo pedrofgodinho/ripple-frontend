@@ -11,7 +11,7 @@ export const DEFAULT_ECHO: Echo = {
     secondaryStat: {type: StatType.HpFlat, value: 0},
     substats: []
 }
-export const echoes: Writable<{[key: number]: Echo}> = writable(getFromLocalStorage("echoes", []));
+export const echoes: Writable<{[key: number]: Echo}> = writable(getFromLocalStorage("echoes", {}));
 echoes.subscribe(value => {
     if (browser) {
         localStorage.setItem("echoes", JSON.stringify(value));
@@ -44,7 +44,7 @@ export interface StoredCharacter {
     stats: Character;
     echoes: [number|undefined, number|undefined, number|undefined, number|undefined, number|undefined];
 }
-export const characters: Writable<StoredCharacter[]> = writable(getFromLocalStorage("characters", []));
+export const characters: Writable<{[key: string]: StoredCharacter}> = writable(getFromLocalStorage("characters", {}));
 characters.subscribe(value => {
     if (browser) {
         localStorage.setItem("characters", JSON.stringify(value));
@@ -52,17 +52,16 @@ characters.subscribe(value => {
 });
 
 export function addCharacter(data: CharacterData) {
-    characters.update(characters => [
-        ...characters, 
-        {data, stats: new Character(data.baseStats.a0l01), echoes: [undefined, undefined, undefined, undefined, undefined]}
-    ]);
+    characters.update(characters => ({...characters, [data.id]: {data, stats: new Character(data.baseStats.a0l01), echoes: [undefined, undefined, undefined, undefined, undefined]}}));
 }
 
 export function removeCharacter(id: string) {
-    characters.update(characters => characters.filter(c => c.data.id !== id));
+    characters.update(characters => {
+        const newCharacters = {...characters};
+        delete newCharacters[id];
+        return newCharacters;
+    });
 }
-
-
 
 
 
