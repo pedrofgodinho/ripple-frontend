@@ -1,6 +1,7 @@
 import { browser } from "$app/environment";
-import { StatType, type Echo, type Stat } from "ripple-calculator";
+import { Character, StatType, type Echo } from "ripple-calculator";
 import { get, writable, type Writable } from "svelte/store";
+import type { BackendCharacter as CharacterData, CharacterMetadata } from "./backend/character";
 
 
 // Echo Storage
@@ -39,26 +40,30 @@ export function removeEcho(id: number) {
 
 // Character Storage
 export interface StoredCharacter {
-    id: string;
+    data: CharacterData;
+    stats: Character;
     echoes: [number|undefined, number|undefined, number|undefined, number|undefined, number|undefined];
-} 
-
-const defaultWeapon = {cost: 0, mainStat: {type: StatType.BaseAtk, value: 0}, secondaryStat: {type: StatType.CritDmg, value: 0}, substats: []};
-
-export const weapon: Writable<Echo> = writable(getFromLocalStorage("weapon", defaultWeapon));
-export const extraStats: Writable<Stat[]> = writable(getFromLocalStorage("extraStats", []));
-
-weapon.subscribe(value => {
+}
+export const characters: Writable<StoredCharacter[]> = writable(getFromLocalStorage("characters", []));
+characters.subscribe(value => {
     if (browser) {
-        localStorage.setItem("weapon", JSON.stringify(value));
+        localStorage.setItem("characters", JSON.stringify(value));
     }
 });
 
-extraStats.subscribe(value => {
-    if (browser) {
-        localStorage.setItem("extraStats", JSON.stringify(value));
-    }
-});
+export function addCharacter(data: CharacterData) {
+    characters.update(characters => [
+        ...characters, 
+        {data, stats: new Character(data.baseStats.a0l01), echoes: [undefined, undefined, undefined, undefined, undefined]}
+    ]);
+}
+
+export function removeCharacter(id: string) {
+    characters.update(characters => characters.filter(c => c.data.id !== id));
+}
+
+
+
 
 
 function getFromLocalStorage<T>(key: string, defaultValue: T): T {

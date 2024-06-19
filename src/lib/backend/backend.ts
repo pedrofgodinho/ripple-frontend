@@ -9,7 +9,6 @@ export async function getCharacters(): Promise<CharacterMetadata[]> {
 }
 
 export async function getCharacter(id: string): Promise<BackendCharacter> {
-    console.log("here?");
     const res = await fetch(`${BACKEND_URI}/characters/${id}`)
         .then(response => response.json());
     return res;

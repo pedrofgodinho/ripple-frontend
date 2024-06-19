@@ -8,6 +8,7 @@ export interface CharacterMetadata {
 }
 
 export interface BackendCharacter {
+    id: string;
     name: string;
     element: MoveElement;
     weapon: string; // TODO: enum
